@@ -15,10 +15,9 @@ services:
       - 8389:8389/udp # Gluetun-Shadowsocks?
       - 8389:8389/tcp # Gluetun-Shadowsocks?
       - 8889:8889/tcp # Gluetun
-      # - 9696:9696 # prowlarr
-      - 9117:9117 # jackett
+      - 9696:9696 # prowlarr
       - 8989:8989 # sonarr
-      # - 7878:7878 # radarr
+      - 7878:7878 # radarr
       # - 8686:8686 # lidarr
     volumes:
       - /data/gluetun:/gluetun
