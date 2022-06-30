@@ -56,12 +56,12 @@
 
     - name: Apply predefined p10k.zsh
       copy:
-        src: zsh_templates/p10k.template
+        src: dotfiles/.p10k.zsh
         dest: ~/.p10k.zsh
 
     - name: Apply predefined ~/.zshrc
       copy:
-        src: zsh_templates/zshrc.template
+        src: dotfiles/.zshrc
         dest: ~/.zshrc
 
     - name: Logout of terminal
