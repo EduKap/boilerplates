@@ -1,0 +1,107 @@
+version: "3"
+services:
+  vpn:
+    image: qmcgaw/gluetun
+    container_name: vpn-gluetun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      - 8090:8090 # qbittorrent Web UI
+      - 6881:6881 # qbittorrent
+      - 6881:6881/udp # qbittorrent
+      - 8389:8389/udp # Gluetun-Shadowsocks?
+      - 8389:8389/tcp # Gluetun-Shadowsocks?
+      - 8889:8889/tcp # Gluetun
+      # - 9696:9696 # prowlarr
+      - 9117:9117 # jackett
+      - 8989:8989 # sonarr
+      # - 7878:7878 # radarr
+      # - 8686:8686 # lidarr
+    volumes:
+      - /data/gluetun:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=MySuperSecretPrivateKey
+      - WIREGUARD_ADDRESSES=My.Preferred.ip.address
+      - SERVER_HOSTNAMES=my-preferred-host.domain
+      # Timezone for accurate log times
+      - TZ=Europe/Stockholm
+    restart: unless-stopped
+
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: vpn-qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
+      - UMASK=022
+      - WEBUI_PORT=8090
+    volumes:
+      - /data/qbittorrent/config:/config
+      - /mounts/data/torrents:/torrents
+    network_mode: service:vpn
+    depends_on:
+      - vpn
+    labels:
+      - autoheal=true
+    healthcheck:
+      test: curl google.com || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  prowlarr:
+    image: hotio/prowlarr:testing
+    container_name: prowlarr
+    environment:
+      - PUID=1026
+      - PGID=101
+      - TZ=GB
+    volumes:
+      - /volume1/docker/prowlarr:/config
+    restart: unless-stopped
+    network_mode: service:vpn
+    depends_on:
+      - vpn
+      - qbittorrent
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    container_name: vpn-sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Stockholm
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /data/sonarr/config:/config
+      - /mounts/data:/data
+    restart: unless-stopped
+    network_mode: service:vpn
+    depends_on:
+      - prowlarr
+      - qbittorrent
+
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1026
+      - PGID=101
+      - TZ=Europe/London
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /volume1/docker/radarr3/config:/config
+      - /volume1/MediaServer/video/Films:/movies
+      - /volume1/MediaServer/video/FilmDownloads:/downloads
+    restart: unless-stopped
+    network_mode: service:vpn
+    depends_on:
+      - prowlarr
+      - qbittorrent
