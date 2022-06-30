@@ -1,0 +1,110 @@
+version: "3.9"
+services:
+  cadvisor:
+    command:
+    - '--docker_only=true'
+    - '--housekeeping_interval=30s'
+    - '--disable_metrics=accelerator,cpu_topology,disk,memory_numa,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl,cpuset,advtcp,memory_numa'
+    - '--store_container_labels=false'
+    - '--event_storage_event_limit=default=0'
+    - '--event_storage_age_limit=default=0'
+    container_name: monitoring-cadvisor
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    expose:
+      - 8080
+    hostname: pve-cadvisor
+    image: zcube/cadvisor:latest
+    ipc: shareable
+    networks:
+      - pvemonitor_default
+    privileged: true
+    restart: unless-stopped
+    security_opt:
+      - label=disable
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /etc/machine-id:/etc/machine-id:ro
+
+  grafana:
+    container_name: monitoring-grafana
+    environment:
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+      - GF_PATHS_DATA=/var/lib/grafana
+      - GF_PATHS_HOME=/usr/share/grafana
+      - GF_PATHS_LOGS=/var/log/grafana
+      - GF_PATHS_PLUGINS=/var/lib/grafana/plugins
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    hostname: pve-grafana
+    image: grafana/grafana:main
+    networks:
+      - pvemonitor_default
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      # to be modified depending on your needs
+      - /data/grafana/data:/var/lib/grafana
+      - /data/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - /data/grafana/provisioning:/etc/grafana/provisioning
+
+  node-exporter:
+    container_name: monitoring-node-exporter
+    expose:
+      - 9100
+    hostname: pve-exporter
+    image: prom/node-exporter:latest
+    networks:
+      - pvemonitor_default
+    restart: unless-stopped
+
+  prometheus:
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=${PROMETHEUS_RETENTION:-30d}'
+    container_name: monitoring-prometheus
+    expose:
+      - 9090
+    hostname: pve-prom
+    image: prom/prometheus:latest
+    user: root
+    networks:
+      - pvemonitor_default
+    restart: unless-stopped
+    volumes:
+      # to be modified depending on your needs
+      - /data/prometheus/data:/prometheus
+      - /data/prometheus/config:/etc/prometheus/
+    links:
+      - cadvisor:cadvisor
+      - node-exporter:node-exporter
+
+  pve-metrics:
+    image: influxdb:latest
+    container_name: pve-influxdb
+    hostname: pve-metrics
+    ports:
+      - 8086:8086
+      - 8089:8089/udp
+    volumes:
+      - /data/influxdb2:/var/lib/influxdb2
+      - /data/influxdb2/influxdb.conf:/etc/influxdb2/influxdb.conf
+    user: 1000:1000
+    environment:
+      - DOCKER_INFLUXDB_INIT_USERNAME=MY_USERNAME
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_PASSWORD=MY_PASSWORD
+      - DOCKER_INFLUXDB_INIT_ORG=org1
+      - DOCKER_INFLUXDB_INIT_BUCKET=proxmox
+      - DOCKER_INFLUXDB_INIT_RETENTION=30d
+    restart: unless-stopped
+    networks:
+      - pvemonitor_default
+
+networks:
+  pvemonitor_default:
