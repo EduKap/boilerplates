@@ -1,0 +1,6 @@
+[[udp]]
+   enabled = true
+   bind-address = "0.0.0.0:8086"
+   database = "proxmox"
+   batch-size = 1000
+   batch-timeout = "1s"
