@@ -1,6 +1,7 @@
 - name: Install ZSH, Oh-my-zsh and Powerlevel10k + fonts
   # Change hosts depending on inventory file.
   hosts: localhost
+  become: true
   vars:
     current_user: "{{ ansible_user_id }}"
     zsh_custom: /home/{{ current_user }}/.oh-my-zsh/custom
@@ -10,27 +11,23 @@
         name: git
         state: present
         update_cache: true
-      become: true
 
     - name: Install curl
       apt:
         name: curl
         state: present
         update_cache: true
-      become: true
 
     - name: Install ZSH
       apt:
         name: zsh
         state: present
         update_cache: true
-      become: true
 
     - name: Print ZSH version
       shell: zsh --version
 
     - name: Set default shell
-      become: true
       user:
         name: "{{ current_user }}"
         shell: /bin/zsh
@@ -43,13 +40,11 @@
       loop:
         - zsh-syntax-highlighting
         - zsh-autosuggestions
-      become: true
 
     - name: Install powerline fonts
       apt:
         name: fonts-powerline
         update_cache: true
-      become: true
 
     - name: Install Powerlevel 10k
       shell: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {{ zsh_custom }}/themes/powerlevel10k
