@@ -24,9 +24,9 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=mullvad
       - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=MySuperSecretPrivateKey
-      - WIREGUARD_ADDRESSES=My.Preferred.ip.address
-      - SERVER_HOSTNAMES=my-preferred-host.domain
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - SERVER_HOSTNAMES=${WIREGUARD_SERVER_HOSTNAMES}
       # Timezone for accurate log times
       - TZ=Europe/Stockholm
     restart: unless-stopped
