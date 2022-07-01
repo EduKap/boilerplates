@@ -96,9 +96,8 @@ services:
       - TZ=Europe/London
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /volume1/docker/radarr3/config:/config
-      - /volume1/MediaServer/video/Films:/movies
-      - /volume1/MediaServer/video/FilmDownloads:/downloads
+      - /data/radarr3/config:/config
+      - /mounts/data:/data
     restart: unless-stopped
     network_mode: service:vpn
     depends_on:
