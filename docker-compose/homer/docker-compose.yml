@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  homer:
+    image: b4bz/homer
+    container_name: homer-dashboard
+    ports:
+      - 8902:8080
+    volumes:
+      - /data/homer/assets:/www/assets
