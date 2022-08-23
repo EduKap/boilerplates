@@ -1,42 +1,34 @@
 - name: Install ZSH, Oh-my-zsh and Powerlevel10k + fonts
   # Change hosts depending on inventory file.
   hosts: localhost
-  become: true
-  vars:
-    current_user: "{{ ansible_user_id }}"
-    zsh_custom: /home/{{ current_user }}/.oh-my-zsh/custom
   tasks:
-    - name: Install Git
-      apt:
-        name: git
-        state: present
-        update_cache: true
+    - name: Get current user
+      command: whoami
+      register: current_user
 
-    - name: Install curl
-      apt:
-        name: curl
-        state: present
-        update_cache: true
+    - name: Get zsh_custom directory
+      command: echo "/home/{{ current_user.stdout }}/.oh-my-zsh/custom"
+      register: zsh_custom
 
     - name: Install ZSH
       apt:
         name: zsh
         state: present
         update_cache: true
+      become: True
 
     - name: Print ZSH version
-      shell: zsh --version
+      command: zsh --version
 
-    - name: Set default shell
-      user:
-        name: "{{ current_user }}"
-        shell: /bin/zsh
+    - name: Set default shell to zsh
+      shell: "chsh {{ current_user.stdout }} -s /bin/zsh"
+      become: True
 
     - name: Install Oh-my-zsh
       shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
     - name: Downloading plugins for Oh-My-ZSH
-      shell: git clone https://github.com/zsh-users/{{ item }}.git {{ zsh_custom }}/plugins/{{ item }}
+      command: git clone https://github.com/zsh-users/{{ item }}.git {{ zsh_custom.stdout }}/plugins/{{ item }}
       loop:
         - zsh-syntax-highlighting
         - zsh-autosuggestions
@@ -45,9 +37,10 @@
       apt:
         name: fonts-powerline
         update_cache: true
+      become: yes
 
     - name: Install Powerlevel 10k
-      shell: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {{ zsh_custom }}/themes/powerlevel10k
+      command: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {{ zsh_custom.stdout }}/themes/powerlevel10k
 
     - name: Apply predefined p10k.zsh
       copy:
@@ -58,10 +51,3 @@
       copy:
         src: dotfiles/.zshrc
         dest: ~/.zshrc
-
-    - name: Logout of terminal
-      shell: exit
-
-    - name: Installation finished.
-      debug:
-        msg: Restart your terminal.
