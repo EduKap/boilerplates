@@ -24,6 +24,12 @@
       shell: "chsh {{ current_user.stdout }} -s /bin/zsh"
       become: True
 
+    - name: Install cURL
+      apt:
+        name: curl
+        update_cache: true
+      become: yes
+
     - name: Install Oh-my-zsh
       shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
