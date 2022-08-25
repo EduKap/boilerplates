@@ -1,5 +1,5 @@
 - hosts: localhost
-  become: true
+  become: True
   tasks:
     - name: Remove previous versions of Docker
       apt:
