@@ -1,4 +1,11 @@
 version: "2"
+
+networks:
+  home1macnetwork:
+    external: true
+  proxy:
+    external: true
+
 services:
   adguard-home:
     image: adguard/adguardhome
@@ -15,3 +22,8 @@ services:
       - /data/adguard/workdir:/opt/adguardhome/work
       - /data/adguard/confdir:/opt/adguardhome/conf
     restart: unless-stopped
+
+    networks:
+      home1macnetwork:
+        ipv4_address: 192.168.0.21 #UNUSED IP on network
+      proxy: 
