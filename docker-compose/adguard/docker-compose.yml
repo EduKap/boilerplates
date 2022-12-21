@@ -2,9 +2,13 @@ version: "2"
 
 networks:
   home1macnetwork:
-    external: true
-  proxy:
-    external: true
+    name: home1macnetwork
+    driver: macvlan
+    driver_opts:
+      parent: ens18
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
 
 services:
   adguard-home:
@@ -26,4 +30,3 @@ services:
     networks:
       home1macnetwork:
         ipv4_address: 192.168.0.21 #UNUSED IP on network
-      proxy: 
