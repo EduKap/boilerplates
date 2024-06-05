@@ -7,6 +7,6 @@ services:
     environment:
       - API_KEY=${CLOUDFLARE_DDNS_API_KEY}
       - ZONE=${CLOUDFLARE_WEBSITE}
-      - PROXIED=true
+      - PROXIED=false
       - PUID=1000
       - PGID=1000
