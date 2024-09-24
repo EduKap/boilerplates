@@ -1,0 +1,14 @@
+name: Ansible Linting
+run-name: Running Ansible Linter
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+jobs:
+    Ansible-Linter:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Run ansible-lint
+              uses: ansible/ansible-lint@main
