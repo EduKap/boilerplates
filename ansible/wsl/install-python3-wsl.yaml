@@ -1,8 +1,0 @@
-- hosts: localhost
-  become: true
-  tasks:
-    - name: Install Python3
-      apt:
-        name:
-          - python3
-          - python3-pip
