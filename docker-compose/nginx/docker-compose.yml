@@ -13,12 +13,12 @@ services:
 
     # Uncomment the next line if you uncomment anything in the section
     # environment:
-      # Uncomment this if you want to change the location of 
-      # the SQLite DB file within the container
-      # DB_SQLITE_FILE: "/data/database.sqlite"
+    # Uncomment this if you want to change the location of
+    # the SQLite DB file within the container
+    # DB_SQLITE_FILE: "/data/database.sqlite"
 
-      # Uncomment this if IPv6 is not enabled on your host
-      # DISABLE_IPV6: 'true'
+    # Uncomment this if IPv6 is not enabled on your host
+    # DISABLE_IPV6: 'true'
 
     volumes:
       - /data/nginx-proxy-manager/data:/data
