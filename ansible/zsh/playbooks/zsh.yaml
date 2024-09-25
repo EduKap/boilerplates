@@ -61,10 +61,12 @@
       ansible.builtin.copy:
         src: dotfiles/.p10k.zsh
         dest: ~/.p10k.zsh
+        mode: u=rw,g=r,o=r
       changed_when: false
 
     - name: Apply predefined ~/.zshrc
       ansible.builtin.copy:
         src: dotfiles/.zshrc
         dest: ~/.zshrc
+        mode: u=rw,g=r,o=r
       changed_when: false
