@@ -1,4 +1,5 @@
 - hosts: localhost
+  name: Install Docker
   become: True
   tasks:
     - name: Remove previous versions of Docker
