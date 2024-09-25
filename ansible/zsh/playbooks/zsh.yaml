@@ -40,7 +40,10 @@
       changed_when: false
 
     - name: Downloading plugins for Oh-My-ZSH
-      ansible.builtin.command: git clone https://github.com/zsh-users/{{ item }}.git {{ zsh_custom.stdout }}/plugins/{{ item }}
+      ansible.builtin.git:
+        repo: 'https://github.com/zsh-users/{{ item }}.git'
+        dest: '{{ zsh_custom.stdout }}/plugins/{{ item }}'
+        version: master
       loop:
         - zsh-syntax-highlighting
         - zsh-autosuggestions
@@ -54,7 +57,11 @@
       changed_when: false
 
     - name: Install Powerlevel 10k
-      ansible.builtin.command: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {{ zsh_custom.stdout }}/themes/powerlevel10k
+      ansible.builtin.git:
+        repo: 'https://github.com/romkatv/powerlevel10k.git'
+        dest: '{{ zsh_custom.stdout }}/themes/powerlevel10k'
+        depth: 1
+        version: master
       changed_when: false
 
     - name: Apply predefined p10k.zsh
