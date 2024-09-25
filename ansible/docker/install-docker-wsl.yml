@@ -1,6 +1,6 @@
 - hosts: localhost
   name: Install Docker
-  become: True
+  become: true
   tasks:
     - name: Remove previous versions of Docker
       apt:
