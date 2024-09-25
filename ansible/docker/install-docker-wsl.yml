@@ -3,7 +3,7 @@
   become: true
   tasks:
     - name: Remove previous versions of Docker
-      apt:
+      ansible.builtin.apt:
         state: absent
         name:
           - docker
@@ -15,7 +15,7 @@
     - name: Set up Docker repository
       block:
         - name: Install prerequisite packages
-          apt:
+          ansible.builtin.apt:
             name:
               - ca-certificates
               - curl
@@ -24,19 +24,20 @@
             update_cache: true
 
         - name: Add Docker GPG key
-          apt_key:
+          ansible.builtin.apt_key:
             url: https://download.docker.com/linux/ubuntu/gpg
 
         - name: Get Linux Linux Release
-          shell: lsb_release -cs
+          ansible.builtin.command: lsb_release -cs
           register: lsb_release
+          changed_when: false
 
         - name: Add Docker repository
-          apt_repository:
+          ansible.builtin.apt_repository:
             repo: deb https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
 
     - name: Install Docker Engine
-      apt:
+      ansible.builtin.apt:
         name:
           - docker-ce
           - docker-ce-cli
@@ -45,18 +46,22 @@
         update_cache: true
 
     - name: Add user to docker group
-      shell: usermod -aG docker $USER
+      ansible.builtin.shell: usermod -aG docker $USER
+      changed_when: false
 
     - name: Verify Docker Engine is installed
-      shell: docker --version
+      ansible.builtin.command: docker --version
+      changed_when: false
 
     - name: Verify Docker Compose is installed
-      shell: docker compose version
+      ansible.builtin.command: docker compose version
+      changed_when: false
 
     - name: Start Docker service
-      service:
+      ansible.builtin.service:
         name: docker
         state: started
 
     - name: Verify Docker Hello World can be started.
-      shell: docker run hello-world
+      ansible.builtin.command: docker run hello-world
+      changed_when: false
