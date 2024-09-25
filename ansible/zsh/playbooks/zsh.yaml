@@ -3,57 +3,68 @@
   hosts: localhost
   tasks:
     - name: Get current user
-      command: whoami
+      ansible.builtin.command: whoami
       register: current_user
+      changed_when: current_user.stdout | length > 0
 
     - name: Get zsh_custom directory
-      command: echo "/home/{{ current_user.stdout }}/.oh-my-zsh/custom"
+      ansible.builtin.command: echo "/home/{{ current_user.stdout }}/.oh-my-zsh/custom"
       register: zsh_custom
+      changed_when: "{{current_user.stdout}} in zsh_custom.stdout"
 
     - name: Install ZSH
-      apt:
+      ansible.builtin.apt:
         name: zsh
         state: present
         update_cache: true
-      become: True
+      become: true
+      changed_when: false
 
     - name: Print ZSH version
-      command: zsh --version
+      ansible.builtin.command: zsh --version
+      changed_when: false
 
     - name: Set default shell to zsh
-      shell: "chsh {{ current_user.stdout }} -s /bin/zsh"
-      become: True
+      ansible.builtin.command: "chsh {{ current_user.stdout }} -s /bin/zsh"
+      become: true
+      changed_when: false
 
     - name: Install cURL
-      apt:
+      ansible.builtin.apt:
         name: curl
         update_cache: true
-      become: yes
+      become: true
 
     - name: Install Oh-my-zsh
-      shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      ansible.builtin.shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      changed_when: false
 
     - name: Downloading plugins for Oh-My-ZSH
-      command: git clone https://github.com/zsh-users/{{ item }}.git {{ zsh_custom.stdout }}/plugins/{{ item }}
+      ansible.builtin.command: git clone https://github.com/zsh-users/{{ item }}.git {{ zsh_custom.stdout }}/plugins/{{ item }}
       loop:
         - zsh-syntax-highlighting
         - zsh-autosuggestions
+      changed_when: false
 
     - name: Install powerline fonts
-      apt:
+      ansible.builtin.apt:
         name: fonts-powerline
         update_cache: true
-      become: yes
+      become: true
+      changed_when: false
 
     - name: Install Powerlevel 10k
-      command: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {{ zsh_custom.stdout }}/themes/powerlevel10k
+      ansible.builtin.command: git clone --depth=1 https://github.com/romkatv/powerlevel10k.git {{ zsh_custom.stdout }}/themes/powerlevel10k
+      changed_when: false
 
     - name: Apply predefined p10k.zsh
-      copy:
+      ansible.builtin.copy:
         src: dotfiles/.p10k.zsh
         dest: ~/.p10k.zsh
+      changed_when: false
 
     - name: Apply predefined ~/.zshrc
-      copy:
+      ansible.builtin.copy:
         src: dotfiles/.zshrc
         dest: ~/.zshrc
+      changed_when: false
