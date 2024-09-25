@@ -1,4 +1,5 @@
-[[udp]]
+---
+udp:
    enabled = true
    bind-address = "0.0.0.0:8086"
    database = "proxmox"
