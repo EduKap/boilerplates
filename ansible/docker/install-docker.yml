@@ -45,6 +45,19 @@
           - docker-compose-plugin
         update_cache: true
 
+    - name: Ensure docker group
+      ansible.builtin.group:
+        name: docker
+        state: present
+      changed_when: false
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+      changed_when: false
+
     - name: Add user to docker group
       ansible.builtin.shell: usermod -aG docker $USER
       changed_when: false
