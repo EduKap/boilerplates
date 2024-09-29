@@ -1,0 +1,6 @@
+namespace1:
+  - namespace1/repo1
+  - namespace1/repo2
+namespace2:
+  - namespace2/repo1
+  - namespace2/repo2

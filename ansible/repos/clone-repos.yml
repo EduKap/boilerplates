@@ -1,0 +1,6 @@
+- name: Clone repos
+  hosts: localhost
+  tasks:
+    - name: Get repos from file
+      ansible.builtin.command: echo "Hello world"
+      changed_when: false
