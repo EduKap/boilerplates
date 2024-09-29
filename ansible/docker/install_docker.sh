@@ -1,4 +1,4 @@
-echo -e "\e[1;32m Running Docker WSL Playbook. \e[1;0m"
+echo -e "\e[1;32m Running Docker Installation Playbook. \e[1;0m"
 ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook install-docker.yml --user $USER -i inventory/hosts.ini --ask-become-pass $1
 
 if [ $? -eq 1 ]; then
