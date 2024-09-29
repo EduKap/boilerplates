@@ -1,0 +1,70 @@
+- name: Install Python Development Environment
+  hosts: localhost
+  tasks:
+    - name: Install PyEnv
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          curl https://pyenv.run | bash
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Check for ~/.zshrc
+      ansible.builtin.stat:
+        path: ~/.zshrc
+      register: zshrc
+
+    - name: Add pyenv config to zshrc
+      when: zshrc.stat.exists
+      ansible.builtin.shell:
+        cmd: |
+          echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+          echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+          echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+      changed_when: false
+
+    - name: Add pyenv config to bashrc
+      when: not zshrc.stat.exists
+      ansible.builtin.shell:
+        cmd: |
+          echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+          echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+          echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+      changed_when: false
+
+    - name: Install build dependencies for Python versions
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+          - build-essential
+          - libssl-dev
+          - zlib1g-dev
+          - libbz2-dev
+          - libreadline-dev
+          - libsqlite3-dev
+          - curl
+          - git
+          - libncursesw5-dev
+          - xz-utils
+          - tk-dev
+          - libxml2-dev
+          - libxmlsec1-dev
+          - libffi-dev
+          - liblzma-dev
+
+    - name: Install pipx
+      ansible.builtin.apt:
+        update_cache: true
+        name: pipx
+
+    - name: Run pipx post-install
+      ansible.builtin.command: pipx ensurepath
+      changed_when: false
+
+    - name: Install Poetry with pipx
+      ansible.builtin.command: pipx install poetry
+      changed_when: false
+
+    - name: Set virtualenv config for Poetry
+      ansible.builtin.command: poetry virtualenvs.in-project true
+      changed_when: false
