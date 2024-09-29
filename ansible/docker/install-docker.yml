@@ -27,7 +27,7 @@
           ansible.builtin.apt_key:
             url: https://download.docker.com/linux/ubuntu/gpg
 
-        - name: Get Linux Linux Release
+        - name: Get Linux Release
           ansible.builtin.command: lsb_release -cs
           register: lsb_release
           changed_when: false
