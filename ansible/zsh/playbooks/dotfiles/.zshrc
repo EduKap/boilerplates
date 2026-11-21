@@ -77,11 +77,54 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(
+  # Version Control
+  git
+
+  # Cloud & Infrastructure
+  #docker
+  #docker-compose
+  #kubectl
+  #helm
+  #terraform
+  #aws
+  #gcloud
+  #azure
+
+  # Programming Languages & Tools
+  #python
+  #pip
+  #node
+  #npm
+  #yarn
+  #golang
+  #rust
+
+  # Productivity Boosters
+  fzf
+  extract
+  mise
+  sudo              # Press ESC twice to add sudo to previous command
+  extract           # Universal archive extractor (works with .tar, .zip, .gz, etc.)
+  z                 # Jump to frequently used directories
+  history           # Enhanced history commands
+  command-not-found # Suggests package to install for missing commands
+  vscode            # VS Code aliases and shortcuts
+
+  # Community Plugins (must be last)
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  zsh-interactive-cd
+)
+
+alias bat=batcat
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
+source /usr/share/doc/fzf/examples/key-bindings.zsh
+export FZF_DEFAULT_OPTS="--preview 'batcat --color=always {}'"
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -109,3 +152,4 @@ source $ZSH/oh-my-zsh.sh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+eval "$(/home/eduard/.local/bin/mise activate zsh)"

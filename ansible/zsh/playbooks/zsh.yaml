@@ -10,7 +10,7 @@
     - name: Get zsh_custom directory
       ansible.builtin.command: echo "/home/{{ current_user.stdout }}/.oh-my-zsh/custom"
       register: zsh_custom
-      changed_when: "{{current_user.stdout}} in zsh_custom.stdout"
+      # changed_when: "{{current_user.stdout}} in zsh_custom.stdout"
 
     - name: Install ZSH
       ansible.builtin.apt:
