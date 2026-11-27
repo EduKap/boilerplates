@@ -116,3 +116,4 @@
   handlers:
     - name: Refresh font cache
       ansible.builtin.command: fc-cache -f
+      changed_when: false
