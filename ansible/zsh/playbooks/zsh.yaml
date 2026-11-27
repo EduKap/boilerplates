@@ -10,7 +10,6 @@
     - name: Get zsh_custom directory
       ansible.builtin.command: echo "/home/{{ current_user.stdout }}/.oh-my-zsh/custom"
       register: zsh_custom
-      # changed_when: "{{current_user.stdout}} in zsh_custom.stdout"
 
     - name: Install ZSH
       ansible.builtin.apt:
@@ -28,12 +27,6 @@
       ansible.builtin.command: "chsh {{ current_user.stdout }} -s /bin/zsh"
       become: true
       changed_when: false
-
-    - name: Install cURL
-      ansible.builtin.apt:
-        name: curl
-        update_cache: true
-      become: true
 
     - name: Install Oh-my-zsh
       ansible.builtin.shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -69,6 +62,7 @@
         src: dotfiles/.p10k.zsh
         dest: ~/.p10k.zsh
         mode: u=rw,g=r,o=r
+        force: true
       changed_when: false
 
     - name: Apply predefined ~/.zshrc
@@ -76,4 +70,5 @@
         src: dotfiles/.zshrc
         dest: ~/.zshrc
         mode: u=rw,g=r,o=r
+        force: true
       changed_when: false

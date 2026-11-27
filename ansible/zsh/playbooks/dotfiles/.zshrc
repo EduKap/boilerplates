@@ -122,9 +122,17 @@ alias bat=batcat
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-source /usr/share/doc/fzf/examples/key-bindings.zsh
-export FZF_DEFAULT_OPTS="--preview 'batcat --color=always {}'"
+source <(fzf --zsh)
+export FZF_DEFAULT_OPTS="--height ~100% --style full --preview 'batcat --color=always {}'"
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export FZF_CTRL_T_OPTS="
+  --walker-skip .git
+  --preview 'batcat -n --color=always {}'
+  --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+# Print tree structure in the preview window
+export FZF_ALT_C_OPTS="
+  --walker-skip .git
+  --preview 'tree -C {}'"
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -152,4 +160,4 @@ export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-eval "$(/home/eduard/.local/bin/mise activate zsh)"
+eval "$("$HOME/.local/bin/mise" activate zsh)"
