@@ -103,7 +103,7 @@ plugins=(
   # Productivity Boosters
   fzf
   extract
-  mise
+  #mise
   sudo              # Press ESC twice to add sudo to previous command
   extract           # Universal archive extractor (works with .tar, .zip, .gz, etc.)
   z                 # Jump to frequently used directories
@@ -160,4 +160,4 @@ export FZF_ALT_C_OPTS="
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-eval "$("$HOME/.local/bin/mise" activate zsh)"
+#eval "$("$HOME/.local/bin/mise" activate zsh)"
